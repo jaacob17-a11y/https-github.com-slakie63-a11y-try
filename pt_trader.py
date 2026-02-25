@@ -14,6 +14,10 @@ from colorama import Fore, Style
 import traceback
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.primitives import serialization
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # -----------------------------
 # GUI HUB OUTPUTS
@@ -322,17 +326,24 @@ def _refresh_paths_and_symbols():
 
 
 # API STUFF (Binance)
-API_KEY = ""
-API_SECRET = ""
+# Priority: .env file > environment variables > r_key.txt/r_secret.txt
+API_KEY = os.environ.get('BINANCE_API_KEY', '')
+API_SECRET = os.environ.get('BINANCE_API_SECRET', '')
 
-try:
-    with open('r_key.txt', 'r', encoding='utf-8') as f:
-        API_KEY = (f.read() or "").strip()
-    with open('r_secret.txt', 'r', encoding='utf-8') as f:
-        API_SECRET = (f.read() or "").strip()
-except Exception:
-    API_KEY = os.environ.get('BINANCE_API_KEY', '')
-    API_SECRET = os.environ.get('BINANCE_API_SECRET', '')
+# Fallback to files if env vars not set
+if not API_KEY:
+    try:
+        with open('r_key.txt', 'r', encoding='utf-8') as f:
+            API_KEY = (f.read() or "").strip()
+    except Exception:
+        pass
+
+if not API_SECRET:
+    try:
+        with open('r_secret.txt', 'r', encoding='utf-8') as f:
+            API_SECRET = (f.read() or "").strip()
+    except Exception:
+        pass
 
 if not API_KEY or not API_SECRET:
     print(
