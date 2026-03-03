@@ -526,6 +526,23 @@ class CryptoAPITrading:
                 or len(acct.get("balances", [])) > 0
             ):
                 print(f"{Fore.GREEN}  ✓ Account Access: OK{Style.RESET_ALL}")
+                
+                # Display balance information
+                try:
+                    total_btc = float(acct.get("totalAssetOfBtc", 0))
+                    print(f"{Fore.CYAN}  Account Balance:{Style.RESET_ALL}")
+                    print(f"    Total BTC Value: {total_btc:.8f} BTC")
+                    
+                    # Extract USDT balance
+                    usdt_balance = 0.0
+                    for balance in acct.get("balances", []):
+                        if balance.get("asset") == "USDT":
+                            usdt_balance = float(balance.get("free", 0))
+                            break
+                    print(f"    USDT Balance: ${usdt_balance:.2f}")
+                except Exception as e:
+                    print(f"{Fore.YELLOW}  ⚠ Could not parse balance info: {e}{Style.RESET_ALL}")
+                
                 return True, "API credentials are valid and have proper permissions."
             else:
                 print(
